@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#155E95">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="九州行程">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%8B%3C/text%3E%3C/svg%3E">
+<title>九州自駕 6 天行程</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  --bg: #EDF1F4;
+  --card: #FFFFFF;
+  --ink: #18263A;
+  --sub: #55657A;
+  --line: #D3DBE3;
+  --accent: #155E95;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #E1EEF8;
+  --warn: #A8322D;
+  --warn-bg: #FBECEA;
+  --sun: #F0BE3C;
+  --sun-bg: #FFF4D1;
+  --ok: #2C7A4B;
+  --sans: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", "Heiti TC", sans-serif;
+  --serif: "Noto Serif TC", "Songti TC", "PMingLiU", serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E1620; --card: #17222F; --ink: #EAF0F6; --sub: #9FB0C3; --line: #2A3A4D;
+    --accent: #6DB4EA; --accent-ink: #0E1620; --accent-soft: #1B3147;
+    --warn: #F08A82; --warn-bg: #3A1E1E; --sun: #F0BE3C; --sun-bg: #3A3015; --ok: #6CCB93;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E1620; --card: #17222F; --ink: #EAF0F6; --sub: #9FB0C3; --line: #2A3A4D;
+  --accent: #6DB4EA; --accent-ink: #0E1620; --accent-soft: #1B3147;
+  --warn: #F08A82; --warn-bg: #3A1E1E; --sun: #F0BE3C; --sun-bg: #3A3015; --ok: #6CCB93;
+}
+*, *::before, *::after { box-sizing: inherit; }
+html { scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 72px); font-size: 18px; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--sans); line-height: 1.6; font-size: 1rem;
+  padding-bottom: 5.5rem;
+}
+button, input, textarea, select { font: inherit; color: inherit; }
+a { color: var(--accent); }
+:focus-visible { outline: 3px solid var(--sun); outline-offset: 2px; }
+
+/* header */
+.top { padding: 1rem 1rem 0.75rem; max-width: 40rem; margin: 0 auto; }
+.top h1 { font-family: var(--serif); font-weight: 900; font-size: 1.55rem; line-height: 1.25; margin: 0; }
+.top p { margin: 0.25rem 0 0; color: var(--sub); font-size: 0.85rem; }
+.size { display: flex; gap: 0.4rem; margin-top: 0.7rem; align-items: center; font-size: 0.85rem; color: var(--sub); }
+.size button {
+  min-width: 2.8rem; height: 2.4rem; border-radius: 0.6rem; border: 1.5px solid var(--line);
+  background: var(--card); cursor: pointer; font-weight: 700;
+}
+.size button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+/* day chips */
+.days {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  background: var(--bg); padding: 0.5rem 0 0.6rem; border-bottom: 1px solid var(--line);
+}
+.days-inner { display: flex; gap: 0.5rem; overflow-x: auto; padding: 0 1rem; max-width: 40rem; margin: 0 auto; scrollbar-width: none; }
+.days-inner::-webkit-scrollbar { display: none; }
+.chip {
+  flex: 0 0 auto; min-width: 4.3rem; padding: 0.4rem 0.6rem; border-radius: 0.8rem;
+  border: 1.5px solid var(--line); background: var(--card); cursor: pointer; text-align: center; line-height: 1.25;
+}
+.chip b { display: block; font-size: 1.05rem; }
+.chip span { font-size: 0.75rem; color: var(--sub); }
+.chip[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.chip[aria-selected="true"] span { color: var(--accent-ink); opacity: 0.9; }
+.chip.today { box-shadow: 0 0 0 3px var(--sun); }
+
+main { max-width: 40rem; margin: 0 auto; padding: 1rem; }
+
+/* ticket-stub day header: the one bold element */
+.stub {
+  background: var(--accent); color: var(--accent-ink); border-radius: 1.1rem; padding: 1.1rem 1.1rem 1rem;
+  display: grid; grid-template-columns: auto 1fr; column-gap: 1rem; align-items: center; position: relative;
+}
+.stub .date { font-family: var(--serif); font-weight: 900; font-size: 2.6rem; line-height: 1; }
+.stub .wd { font-size: 0.85rem; opacity: 0.9; margin-top: 0.25rem; }
+.stub .route { font-weight: 700; font-size: 1.1rem; }
+.stub .ttl { font-size: 0.9rem; opacity: 0.92; margin-top: 0.15rem; }
+.stub .stay {
+  grid-column: 1 / -1; margin-top: 0.8rem; padding-top: 0.7rem; border-top: 2px dashed currentColor; border-top: 2px dashed color-mix(in srgb, var(--accent-ink) 45%, transparent);
+  display: flex; gap: 0.6rem; justify-content: space-between; align-items: center; font-size: 0.9rem;
+}
+.stub .stay a { color: var(--accent-ink); font-weight: 700; white-space: nowrap; }
+
+.alerts { margin: 0.9rem 0 0; padding: 0.8rem 1rem; background: var(--sun-bg); border-left: 5px solid var(--sun); border-radius: 0.6rem; font-size: 0.92rem; }
+.alerts b { display: block; margin-bottom: 0.2rem; }
+.alerts ul { margin: 0; padding-left: 1.1rem; }
+
+.seg { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; margin: 1rem 0; background: var(--line); padding: 0.3rem; border-radius: 0.9rem; }
+.seg button { height: 3rem; border: 0; border-radius: 0.7rem; background: transparent; cursor: pointer; font-weight: 700; color: var(--sub); }
+.seg button[aria-pressed="true"] { background: var(--card); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,0.18); }
+
+/* timeline */
+.line { list-style: none; margin: 0; padding: 0; }
+.stop { position: relative; padding: 0 0 1.1rem 3.6rem; }
+.stop::before { content: ""; position: absolute; left: 1.35rem; top: 2.8rem; bottom: 0; width: 3px; background: var(--line); }
+.stop:last-child::before { display: none; }
+.check {
+  position: absolute; left: 0; top: 0.1rem; width: 2.8rem; height: 2.8rem; border-radius: 50%;
+  border: 3px solid var(--accent); background: var(--card); cursor: pointer; padding: 0; display: grid; place-items: center;
+  font-weight: 900; font-size: 1.3rem; color: transparent;
+}
+.stop.done .check { background: var(--ok); border-color: var(--ok); color: #fff; }
+.stop.next .check { border-color: var(--sun); box-shadow: 0 0 0 4px var(--sun-bg); }
+.stop .time { font-family: var(--serif); font-weight: 900; font-size: 1.25rem; line-height: 1.2; display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+.tag { font-family: var(--sans); font-size: 0.75rem; font-weight: 700; background: var(--sun); color: #3B2D00; padding: 0.1rem 0.5rem; border-radius: 0.5rem; }
+.stop .box { background: var(--card); border-radius: 0.9rem; padding: 0.7rem 0.9rem 0.8rem; margin-top: 0.35rem; border: 1.5px solid var(--line); }
+.stop.next .box { border-color: var(--sun); }
+.stop h3 { margin: 0; font-size: 1.1rem; line-height: 1.4; }
+.stop.done h3 { text-decoration: line-through; color: var(--sub); }
+.stop p { margin: 0.25rem 0 0; color: var(--sub); font-size: 0.92rem; }
+.links { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.6rem; }
+.go {
+  display: inline-flex; align-items: center; min-height: 2.8rem; padding: 0 1rem; border-radius: 0.7rem;
+  background: var(--accent-soft); color: var(--accent); font-weight: 700; text-decoration: none; font-size: 0.95rem;
+}
+
+/* backups */
+.bk { background: var(--card); border: 1.5px solid var(--line); border-radius: 0.9rem; padding: 0.8rem 1rem; margin-bottom: 0.7rem; }
+.bk .when { font-weight: 700; color: var(--warn); }
+.bk .when::before { content: "如果："; color: var(--sub); font-weight: 500; }
+.bk .plan { margin-top: 0.3rem; }
+.bk .plan::before { content: "改成："; color: var(--sub); }
+.lead { color: var(--sub); font-size: 0.92rem; margin: 0 0 0.8rem; }
+
+/* generic sections */
+h2 { font-family: var(--serif); font-weight: 900; font-size: 1.3rem; margin: 1.6rem 0 0.5rem; }
+h2:first-child { margin-top: 0.2rem; }
+.card { background: var(--card); border: 1.5px solid var(--line); border-radius: 0.9rem; padding: 0.8rem 1rem; margin-bottom: 0.7rem; }
+.card h3 { margin: 0 0 0.3rem; font-size: 1.05rem; }
+.card p { margin: 0.2rem 0; font-size: 0.95rem; }
+.card ul { margin: 0.2rem 0; padding-left: 1.2rem; font-size: 0.95rem; }
+.card li { margin: 0.25rem 0; }
+.sos {
+  display: flex; justify-content: space-between; align-items: center; gap: 0.6rem; text-decoration: none; color: var(--ink);
+  background: var(--card); border: 1.5px solid var(--line); border-radius: 0.9rem; padding: 0.7rem 1rem; margin-bottom: 0.6rem; min-height: 3.4rem;
+}
+.sos .who { font-weight: 700; }
+.sos .who small { display: block; font-weight: 400; color: var(--sub); font-size: 0.8rem; }
+.sos .num { font-family: var(--serif); font-weight: 900; font-size: 1.3rem; color: var(--warn); white-space: nowrap; }
+.sos.big .num { font-size: 1.9rem; }
+
+.field { display: block; margin: 0.5rem 0; font-size: 0.85rem; color: var(--sub); }
+.field input {
+  display: block; width: 100%; margin-top: 0.2rem; height: 2.9rem; padding: 0 0.7rem; border-radius: 0.6rem;
+  border: 1.5px solid var(--line); background: var(--bg); font-size: 1rem;
+}
+.field input::placeholder { color: color-mix(in srgb, var(--sub) 70%, transparent); }
+
+.say { display: grid; gap: 0.1rem; }
+.say .zh { font-weight: 700; }
+.say .jp { font-size: 1.15rem; font-weight: 500; }
+.say .ro { font-size: 0.82rem; color: var(--sub); }
+
+.prog { height: 0.7rem; border-radius: 0.4rem; background: var(--line); overflow: hidden; margin: 0.4rem 0 0.2rem; }
+.prog i { display: block; height: 100%; background: var(--ok); width: 0; transition: width 0.25s; }
+.todo { display: flex; gap: 0.8rem; align-items: flex-start; padding: 0.55rem 0; border-bottom: 1px solid var(--line); cursor: pointer; }
+.todo:last-child { border-bottom: 0; }
+.todo input { width: 1.7rem; height: 1.7rem; margin: 0.1rem 0 0; flex: 0 0 auto; accent-color: var(--ok); }
+.todo span { font-size: 0.98rem; }
+.todo input:checked + span { color: var(--sub); text-decoration: line-through; }
+
+/* bottom nav */
+.bottom {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; background: var(--card); border-top: 1px solid var(--line);
+  padding: 0.4rem 0.5rem calc(0.4rem + env(safe-area-inset-bottom, 0px));
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.3rem; max-width: 40rem; margin: 0 auto;
+}
+.bottom button {
+  border: 0; background: transparent; height: 3.6rem; border-radius: 0.8rem; cursor: pointer; color: var(--sub);
+  font-weight: 700; font-size: 0.9rem; display: grid; place-items: center; align-content: center; gap: 0.1rem;
+}
+.bottom button svg { width: 1.5rem; height: 1.5rem; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.bottom button[aria-current="page"] { color: var(--accent); background: var(--accent-soft); }
+
+
+/* tabelog + favorites */
+.go.tb { background: var(--sun-bg); color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--sun); }
+button.go { border: 0; cursor: pointer; font-family: inherit; }
+button.go.del { background: var(--warn-bg); color: var(--warn); }
+.btn { width: 100%; min-height: 3.2rem; border: 0; border-radius: 0.8rem; background: var(--accent); color: var(--accent-ink); font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 0.4rem; }
+.msg { margin: 0.5rem 0 0; min-height: 1.4em; font-size: 0.9rem; color: var(--warn); }
+.field select { display: block; width: 100%; margin-top: 0.2rem; height: 2.9rem; padding: 0 0.5rem; border-radius: 0.6rem; border: 1.5px solid var(--line); background: var(--bg); font-size: 1rem; }
+.fav .links { margin-top: 0.5rem; }
+.msg.ok { color: var(--ok); }
+textarea { display: block; width: 100%; margin-top: 0.2rem; padding: 0.6rem 0.7rem; border-radius: 0.6rem; border: 1.5px solid var(--line); background: var(--bg); font-size: 0.9rem; line-height: 1.4; resize: vertical; word-break: break-all; }
+[hidden] { display: none !important; }
+.foot { color: var(--sub); font-size: 0.8rem; margin-top: 1.5rem; }
+@media (prefers-reduced-motion: reduce) { .prog i { transition: none; } }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <h1>九州自駕 6 天 5 夜</h1>
+  <p>2/10 至 2/15　日本時間比台灣快 1 小時</p>
+  <div class="size" role="group" aria-label="字體大小">
+    <span>字體</span>
+    <button data-size="18" aria-pressed="true">標準</button>
+    <button data-size="21" aria-pressed="false">大</button>
+    <button data-size="24" aria-pressed="false">特大</button>
+  </div>
+</header>
+
+<div class="days" id="daysBar"><div class="days-inner" id="chips" role="tablist" aria-label="選擇日期"></div></div>
+<main id="view"></main>
+
+<nav class="bottom" aria-label="主選單">
+  <button data-tab="trip" aria-current="page">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"/><path d="M4 10h16M9 5v14"/></svg>行程
+  </button>
+  <button data-tab="food">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v8M4 3v5a3 3 0 0 0 6 0V3M7 11v10"/><path d="M17 21V3c-2.5 1.5-3.5 4-3.5 7.5 0 1.5 1 2.5 3.5 2.5"/></svg>美食
+  </button>
+  <button data-tab="list">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>清單
+  </button>
+  <button data-tab="info">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg>資訊
+  </button>
+</nav>
+
+<script>
+/* ---------- storage (guarded) ---------- */
+var mem = {};
+function load(key, fallback) {
+  try { var v = localStorage.getItem(key); if (v !== null) return JSON.parse(v); } catch (e) {}
+  return (key in mem) ? mem[key] : fallback;
+}
+function save(key, val) {
+  mem[key] = val;
+  try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {}
+}
+
+/* ---------- data ---------- */
+var STAYS = {
+  aso:  { label: '熊本阿蘇萬楓酒店', def: '熊本阿蘇萬楓酒店' },
+  yufu: { label: 'Yufuin Lamp no Yado', def: 'Yufuin Lamp no Yado' },
+  kuma: { label: '熊本新市街光芒飯店', def: '熊本新市街光芒飯店' },
+  mova: { label: 'Mova Villa Haramizu', def: 'Mova Villa Haramizu 菊陽町' }
+};
+
+var DAYS = [
+ { id: 1, date: '2/10', wd: '三', md: [2,10], route: '熊本機場 → 阿蘇', title: '降落大自然，直面阿蘇火山與溫泉', stay: 'aso',
+   alerts: ['出發前一天查中岳火山口有沒有管制。', '山區日落早、夜間易結冰，晚餐後不要再開車。'],
+   stops: [
+    { t: '11:00', n: '熊本機場取車出發', d: 'AVIS Budget 租車 熊本機場店。取車手續常耗時，抓 11:30 出發較保險。', links: [['AVIS 取車', 'AVIS Budget 熊本空港店'], ['機場', '熊本空港']] },
+    { t: '12:00', n: '阿蘇草千里之濱、中岳火山口', d: '先確認火山口沒有管制再上山。', links: [['草千里', '草千里ヶ浜'], ['中岳火山口', '阿蘇山 火口']] },
+    { t: '13:00', n: '草千里景觀餐廳午餐', d: '名物赤牛丼；不吃牛可點雞肉丼。', links: [['餐廳', '草千里 レストラン']], tb: [['附近午餐', '阿蘇 草千里 ランチ']] },
+    { t: '15:30', n: '入住熊本阿蘇萬楓酒店', d: '先休息、泡湯，調整時差。', hotel: 'aso' },
+    { t: '18:00', n: '溫泉老街悠閒晚餐', d: '早點用餐，早點回房。', links: [['溫泉街', '阿蘇 温泉街 レストラン']], tb: [['晚餐', '阿蘇 夕食']] }
+   ],
+   backups: [
+    ['中岳火山口管制', '草千里照常參觀，改去阿蘇火山博物館（室內，有火山模型與影片）。午餐照常在草千里。'],
+    ['下雨或起霧', '以室內為主：火山博物館，再逛阿蘇神社與門前町商店街，下午放輕鬆。'],
+    ['山路結冰、車況不佳', '取消草千里，直接開往飯店，把時間留給溫泉。'],
+    ['取車延誤', '午餐改在機場或市區吃，縮短草千里停留，確保 15:30 前入住。']
+   ] },
+ { id: 2, date: '2/11', wd: '四', md: [2,11], route: '阿蘇 → 高千穗 → 由布院', title: '深入神話高千穗峽划船，奔向由布院', stay: 'yufu',
+   alerts: ['划船務必先預約，冬季是熱門時段。', '高千穗到由布院約 2 小時 15 分，13:30 準時出發，天黑前抵達。'],
+   stops: [
+    { t: '08:30', n: '阿蘇旅館退房出發', d: '往南開，車程約 1 小時。' },
+    { t: '09:30', n: '抵達高千穗峽', d: '先到售票處排號，再確認預約。', links: [['高千穗峽', '高千穂峡']] },
+    { t: '11:00', n: '高千穗峽划船', d: '搶先預約，上午光線佳。', links: [['划船處', '高千穂峡 ボート乗り場']] },
+    { t: '12:15', n: '午餐', d: '划船後在高千穗用餐，13:30 要準時出發。', tb: [['高千穗午餐', '高千穂 ランチ']] },
+    { t: '13:30', n: '長途前往由布院', d: '車程約 2 小時 15 分，中途停超商讓長輩伸展。' },
+    { t: '16:00', n: '入住 Yufuin Lamp no Yado', d: '擼貓、免預約個人包場湯屋。', hotel: 'yufu' },
+    { t: '18:00', n: '飯店晚餐' }
+   ],
+   backups: [
+    ['划船停航（雨後水位高、結冰、強風）', '改走峽谷步道看真名井瀑布，再去天岩戶神社與天安河原。'],
+    ['划船已滿', '同上，並在 10:00 前到場排候補。'],
+    ['通往高千穗的道路封閉或結冰', '取消高千穗，從阿蘇直接往由布院，改走山並公路，停大觀峰展望台，車程約 2 小時。'],
+    ['長輩疲累', '午餐改在高千穗站附近簡單用餐，13:00 前出發。']
+   ] },
+ { id: 3, date: '2/12', wd: '五', md: [2,12], route: '由布院 → 動物園 → 別府', title: '野生動物餵食體驗，別府震撼地獄巡禮', stay: 'yufu',
+   alerts: ['動物園叢林巴士要自備衣物保暖，餵食時抓緊鐵夾。'],
+   stops: [
+    { t: '08:30', n: '由布院出發' },
+    { t: '09:15', n: '九州自然動物園', d: '必搭叢林巴士，用鐵夾餵獅子與大象。', links: [['動物園', '九州自然動物公園 アフリカンサファリ']] },
+    { t: '12:30', n: '別府地獄巡禮', d: '重點看海地獄、血池地獄，行走距離短。', links: [['海地獄', '別府 海地獄'], ['血池地獄', '別府 血の池地獄']] },
+    { t: '13:30', n: '地獄蒸工房午餐', d: '地熱清蒸鮮蝦、蔬菜與豬肉，長輩超愛。', links: [['蒸工房', '地獄蒸し工房 鉄輪']], tb: [['看蒸工房評價', '地獄蒸し工房 鉄輪'], ['別府其他午餐', '別府 鉄輪 ランチ']] },
+    { t: '16:00', n: '返回 Yufuin Lamp no Yado', d: '休息、泡湯。', hotel: 'yufu' },
+    { t: '18:30', n: '晚餐', tb: [['由布院晚餐', '由布院 夕食']] }
+   ],
+   backups: [
+    ['下雨', '叢林巴士有車頂，動物園照去，帶雨衣；地獄巡禮縮減為海地獄與血池地獄兩處。'],
+    ['地獄蒸工房排隊太久', '午餐改在別府市區吃當地料理，晚點再回頭。'],
+    ['天氣太冷', '動物園縮短時間，下午提早回由布院多泡湯。'],
+    ['想換行程', '改去由布院 Floral Village（貓頭鷹與小動物）加金鱗湖周邊美術館，步行距離短。']
+   ] },
+ { id: 4, date: '2/13', wd: '六', md: [2,13], route: '由布院 → 熊本', title: '朝霧金鱗湖，奔回熊本名城', stay: 'kuma',
+   alerts: ['清晨氣溫低，長輩請加強保暖。', '出發前查高速公路有沒有封閉或結冰。'],
+   stops: [
+    { t: '07:30', n: '散步到金鱗湖看晨霧', d: '清晨限定的夢幻景色。', links: [['金鱗湖', '金鱗湖']] },
+    { t: '09:30', n: '悠閒逛湯之坪街道、採買點心', d: '退房後逛街，行李先放車上。', links: [['湯之坪', '湯の坪街道']] },
+    { t: '11:30', n: '大分出發返回熊本', d: '自駕走高速公路，車程約 2 小時。' },
+    { t: '12:45', n: '午餐', d: '中途休息站先吃，或到熊本城周邊再吃。', tb: [['熊本城附近午餐', '熊本城 ランチ']] },
+    { t: '14:00', n: '三大名城：熊本城、櫻之馬場城彩苑', d: '有無障礙木棧道與電梯。', links: [['熊本城', '熊本城'], ['城彩苑', '桜の馬場 城彩苑']] },
+    { t: '17:00', n: '入住熊本新市街光芒飯店', hotel: 'kuma' },
+    { t: '18:30', n: '晚餐', d: '熊本有馬肉與熊本拉麵可選。', tb: [['新市街晚餐', '新市街 熊本 夕食'], ['馬肉', '熊本 馬刺し'], ['熊本拉麵', '熊本 ラーメン']] }
+   ],
+   backups: [
+    ['沒有晨霧或下雨', '睡晚一點，9:00 後再逛湯之坪街道，不必勉強早起。'],
+    ['高速公路封閉或結冰', '改走一般道路並提早 1 小時出發，下午只留熊本城。'],
+    ['熊本城下雨', '先到櫻之馬場城彩苑（有室內商店與餐飲），天守閣視天氣決定是否入內。'],
+    ['長輩體力不足', '熊本城只看城彩苑與外觀，提早入住休息。']
+   ] },
+ { id: 5, date: '2/14', wd: '日', md: [2,14], route: '熊本市區 → 菊陽原水', title: '絕美日式迴遊庭園，熊本熊部長見面會', stay: 'mova',
+   alerts: ['先查官網，確認熊本熊部長在館與表演時間。', 'Mova Villa 是獨棟別墅，入住方式與時間請先向房東確認，並記得今晚的晚餐要自己安排。'],
+   stops: [
+    { t: '08:45', n: '熊本新市街光芒飯店退房', d: '行李先放車上。' },
+    { t: '09:30', n: '水前寺成趣園', d: '平緩好走，長輩可悠閒餵巨大錦鯉與烏龜。', links: [['成趣園', '水前寺成趣園']] },
+    { t: '11:30', n: 'SAKURA MACHI 大採購與午餐', d: '巨型熊本熊打卡。', links: [['商場', 'SAKURA MACHI Kumamoto']], tb: [['商場午餐', 'サクラマチクマモト ランチ']] },
+    { t: '14:30', n: '熊本熊廣場', d: '近距離看部長熱情跳舞，需查官網在館時間。', links: [['熊本熊廣場', 'くまモンスクエア']] },
+    { t: '16:00', n: '上下通商店街藥妝大補貨', d: '採買完可先把東西放回車上。', links: [['上下通', '上通 下通 アーケード 熊本']] },
+    { t: '17:30', n: '晚餐', d: '建議在市區吃完再去別墅；或先入住，再到原水站附近用餐。', tb: [['上下通晚餐', '上通 下通 夕食'], ['原水附近晚餐', '菊陽町 原水 夕食']] },
+    { t: '19:00', n: '入住 Mova Villa Haramizu', d: '獨棟別墅，確認入住方式、門鎖密碼與停車位置。', hotel: 'mova' }
+   ],
+   backups: [
+    ['下雨', '上午改去熊本縣立美術館（室內），下午逛商場；水前寺成趣園視天氣取消。'],
+    ['部長不在館', '看官網公告，仍可在熊本熊廣場拍照，並到商場買周邊。'],
+    ['藥妝店人潮多', '先買重點品項，其餘留給機場免稅店。'],
+    ['別墅入住方式不清楚或進不去', '先聯絡房東（聯絡方式填在「資訊」頁），確認自助入住方式與密碼。'],
+    ['不想晚上開車找餐廳', '先到別墅附近的超市或超商買熟食與食材，在別墅自己吃。']
+   ] },
+ { id: 6, date: '2/15', wd: '一', md: [2,15], route: '菊陽原水 → 機場 → 台灣', title: '滿載而歸，輕鬆返台', stay: null,
+   alerts: ['航班 11:30。還車後直接去櫃檯報到，再逛免稅店，留意登機時間。', '還車前務必加滿油，並拍照留存車況。'],
+   stops: [
+    { t: '08:30', n: '別墅退房', d: '依房東規定整理、關窗鎖門。' },
+    { t: '09:15', n: '機場周邊加滿油、辦理還車', d: '先加滿油，再到 AVIS Budget 熊本機場店還車，拍照留存車況。', links: [['加油站', '熊本空港 ガソリンスタンド'], ['AVIS 還車', 'AVIS Budget 熊本空港店']] },
+    { t: '09:45', n: '新航廈免稅店最後衝刺，享用在地輕食', d: '注意登機時間。', links: [['機場', '熊本空港']], tb: [['機場餐廳', '熊本空港 レストラン']] },
+    { t: '11:30', n: '搭機返台，平安到家' }
+   ],
+   backups: [
+    ['航班延誤或取消', '先聯絡航空公司，再通知租車公司延長還車時間，並確認 2/15 當晚住宿。'],
+    ['還車流程拖延', '提早到達，並預先找好機場附近的加油站。'],
+    ['雪或結冰影響交通', '前一晚確認路況，必要時提早 30 分鐘出發。'],
+    ['別墅退房有疑問', '退房前先拍照留存，並聯絡房東確認。']
+   ] }
+];
+
+var CHECKLIST = [
+ { g: '出發前一週：預約與確認', items: [
+   '高千穗峽划船已預約（2/11 上午）',
+   '熊本阿蘇萬楓酒店訂房確認（2/10）',
+   'Yufuin Lamp no Yado 訂房確認（2/11、2/12）',
+   '熊本新市街光芒飯店訂房確認（2/13）',
+   'Mova Villa Haramizu 訂房確認（2/14），並問清楚入住方式與時間',
+   '租車預約確認，記下取還車地點與緊急電話',
+   '租車加保完全免責補償（NOC）',
+   '租車確認附雪胎或防滑鏈',
+   '查熊本熊部長 2/14 在館與表演時間',
+   '開車者的台灣駕照與日文譯本，確認最新規定'
+ ]},
+ { g: '2/14 別墅住宿準備', items: [
+   '2/14 晚餐怎麼吃（市區吃完，或別墅附近用餐）',
+   '2/15 早餐怎麼解決（別墅通常不含餐，可前一晚買好）',
+   '確認別墅退房時間與整理規定'
+ ]},
+ { g: '證件與錢', items: [
+   '護照（效期足夠）',
+   'Visit Japan Web 入境登錄',
+   '日圓現金（山區小店與停車場常不收卡）',
+   '信用卡',
+   '網路：eSIM 或分享器',
+   '行程與訂房資料截圖備份'
+ ]},
+ { g: '冬季保暖與健康', items: [
+   '暖暖包、手套、帽子、圍巾',
+   '防滑好走的鞋',
+   '雨具或輕便雨衣（動物園叢林巴士用）',
+   '長輩常備藥品與用藥紀錄',
+   '護唇膏、乳液（溫泉後保濕）',
+   '泡湯小毛巾、塑膠袋'
+ ]},
+ { g: '車上用品', items: [
+   '手機架與車充線',
+   '導航語言設為中文',
+   '飲水與零食',
+   '薄毯（長輩車程保暖）',
+   '零錢包（停車場、收費站）'
+ ]}
+];
+
+var LINKS = [
+ ['天氣預報（日本氣象廳）', 'https://www.jma.go.jp/bosai/forecast/', '出發前一晚與當天早上看'],
+ ['道路交通資訊（JARTIC）', 'https://www.jartic.or.jp/', '查道路封閉、冰雪與管制'],
+ ['阿蘇中岳火山口管制', 'https://www.google.com/search?q=' + encodeURIComponent('阿蘇山 火口 規制 情報'), '2/10 上山前務必查'],
+ ['高千穗峽划船狀況', 'https://www.google.com/search?q=' + encodeURIComponent('高千穂峡 ボート 営業状況'), '2/11 出發前確認有無停航'],
+ ['熊本熊部長行程', 'https://www.google.com/search?q=' + encodeURIComponent('くまモンスクエア 本日の出演'), '2/14 確認在館與表演時間'],
+ ['外交部領事事務局', 'https://www.boca.gov.tw/', '查駐福岡辦事處最新緊急聯絡電話']
+];
+
+var SAY = [
+ ['請加滿，Regular（紅色油槍）', 'レギュラー満タンでお願いします。', 'Regyurā mantan de onegaishimasu'],
+ ['廁所在哪裡？', 'トイレはどこですか？', 'Toire wa doko desu ka'],
+ ['有中文菜單嗎？', '中国語のメニューはありますか？', 'Chūgokugo no menyū wa arimasu ka'],
+ ['我不吃牛肉', '牛肉は食べられません。', 'Gyūniku wa taberaremasen'],
+ ['這個多少錢？', 'これはいくらですか？', 'Kore wa ikura desu ka'],
+ ['可以退稅嗎？', '免税できますか？', 'Menzei dekimasu ka'],
+ ['可以拍照嗎？', '写真を撮ってもいいですか？', 'Shashin o totte mo ii desu ka'],
+ ['請幫我叫救護車', '救急車を呼んでください。', 'Kyūkyūsha o yonde kudasai'],
+ ['請幫幫我', '助けてください。', 'Tasukete kudasai']
+];
+
+var INFO_FIELDS = {
+  rental: { title: '租車資料（AVIS Budget 熊本機場店）', f: [['company','租車公司'], ['no','預約編號'], ['tel','緊急聯絡電話'], ['place','還車地點與時間']] },
+  aso:  { title: '熊本阿蘇萬楓酒店（2/10）', f: [['name','飯店名稱'], ['addr','地址'], ['tel','電話'], ['no','訂房編號']] },
+  yufu: { title: 'Yufuin Lamp no Yado（2/11、2/12）', f: [['name','飯店名稱'], ['addr','地址'], ['tel','電話'], ['no','訂房編號']] },
+  kuma: { title: '熊本新市街光芒飯店（2/13）', f: [['name','飯店名稱'], ['addr','地址'], ['tel','電話'], ['no','訂房編號']] },
+  mova: { title: 'Mova Villa Haramizu（2/14）', f: [['name','別墅名稱（含棟號）'], ['addr','地址'], ['tel','房東聯絡方式'], ['no','訂房編號'], ['entry','入住方式與密碼']] },
+  other: { title: '其他重要資料', f: [['flight','去回程航班'], ['contact','家人緊急聯絡人'], ['office','駐福岡辦事處海外緊急電話']] }
+};
+
+var REGIONS = [
+  ['阿蘇', '阿蘇'],
+  ['高千穗', '高千穂'],
+  ['由布院', '由布院'],
+  ['別府', '別府'],
+  ['熊本市區（上下通、新市街）', '熊本市'],
+  ['菊陽、原水（別墅附近）', '菊陽町 原水']
+];
+var CUISINES = [
+  ['午餐', 'ランチ'], ['晚餐', '夕食'], ['拉麵', 'ラーメン'], ['燒肉', '焼肉'],
+  ['馬肉', '馬刺し'], ['赤牛', 'あか牛'], ['海鮮', '海鮮'], ['咖啡甜點', 'カフェ'], ['居酒屋', '居酒屋']
+];
+
+/* ---------- state ---------- */
+var state = { tab: 'trip', day: 1, mode: 'main' };
+var done = load('kyushu-done', {});
+var checks = load('kyushu-checks', {});
+var info = load('kyushu-info', {});
+var favs = load('kyushu-favs', []);
+var fontSize = load('kyushu-font', 18);
+
+/* ---------- helpers ---------- */
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function mapUrl(q) { return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q); }
+function tabelogUrl(q) { return 'https://www.google.com/search?q=' + encodeURIComponent('site:tabelog.com ' + q); }
+function toMin(t) { var p = t.split(':'); return +p[0] * 60 + +p[1]; }
+function safeUrl(u) { u = String(u || '').trim(); return /^https?:\/\//i.test(u) ? u : ''; }
+
+function japanNow() {
+  try {
+    var parts = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Tokyo', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: false }).formatToParts(new Date());
+    var o = {}; parts.forEach(function (p) { o[p.type] = +p.value; });
+    return { m: o.month, d: o.day, min: (o.hour % 24) * 60 + o.minute };
+  } catch (e) { return null; }
+}
+function todayDay() {
+  var n = japanNow(); if (!n) return null;
+  for (var i = 0; i < DAYS.length; i++) if (DAYS[i].md[0] === n.m && DAYS[i].md[1] === n.d) return DAYS[i].id;
+  return null;
+}
+function stayName(key) { return (info[key] && info[key].name) ? info[key].name : STAYS[key].label; }
+function stayLink(key) {
+  var h = info[key] || {};
+  var q = ((h.name || '') + ' ' + (h.addr || '')).trim() || STAYS[key].def;
+  return mapUrl(q);
+}
+function favCard(f) {
+  var u = safeUrl(f.url);
+  var h = '<div class="card fav"><h3>' + esc(f.name) + '</h3>';
+  if (f.note) h += '<p>' + esc(f.note) + '</p>';
+  h += '<div class="links">';
+  h += u ? '<a class="go" href="' + esc(u) + '" target="_blank" rel="noopener">開啟網頁</a>'
+         : '<a class="go tb" href="' + tabelogUrl(f.name) + '" target="_blank" rel="noopener">Tabelog 搜尋</a>';
+  h += '<a class="go" href="' + mapUrl(f.name) + '" target="_blank" rel="noopener">地圖導航</a>';
+  h += '<button class="go del" data-delfav="' + esc(f.id) + '">刪除</button></div></div>';
+  return h;
+}
+
+/* ---------- render: trip ---------- */
+function renderChips() {
+  var td = todayDay();
+  var html = DAYS.map(function (d) {
+    return '<button class="chip' + (td === d.id ? ' today' : '') + '" role="tab" data-day="' + d.id + '" aria-selected="' + (state.day === d.id) + '">' +
+      '<b>' + d.date + '</b><span>週' + d.wd + (td === d.id ? ' 今天' : '') + '</span></button>';
+  }).join('');
+  document.getElementById('chips').innerHTML = html;
+  var sel = document.querySelector('.chip[aria-selected="true"]');
+  if (sel && sel.scrollIntoView) sel.scrollIntoView({ inline: 'center', block: 'nearest' });
+}
+
+function renderTrip() {
+  var d = DAYS[state.day - 1];
+  var n = japanNow();
+  var isToday = todayDay() === d.id;
+  var nextIdx = -1;
+  if (isToday && n) {
+    for (var i = 0; i < d.stops.length; i++) { if (toMin(d.stops[i].t) >= n.min && !done[d.id + '-' + i]) { nextIdx = i; break; } }
+  }
+  var h = '';
+  h += '<section class="stub" aria-label="' + esc(d.date) + '">' +
+    '<div><div class="date">' + d.date + '</div><div class="wd">週' + d.wd + ' · 第 ' + d.id + ' 天</div></div>' +
+    '<div><div class="route">' + esc(d.route) + '</div><div class="ttl">' + esc(d.title) + '</div></div>';
+  if (d.stay) {
+    h += '<div class="stay"><span>今晚住：' + esc(stayName(d.stay)) + '</span><a href="' + stayLink(d.stay) + '" target="_blank" rel="noopener">導航到住宿</a></div>';
+  }
+  h += '</section>';
+
+  h += '<div class="alerts"><b>今天先記住</b><ul>' + d.alerts.map(function (a) { return '<li>' + esc(a) + '</li>'; }).join('') + '</ul></div>';
+
+  h += '<div class="seg" role="group" aria-label="切換行程或備案">' +
+    '<button data-mode="main" aria-pressed="' + (state.mode === 'main') + '">主行程</button>' +
+    '<button data-mode="backup" aria-pressed="' + (state.mode === 'backup') + '">備案</button></div>';
+
+  if (state.mode === 'main') {
+    h += '<ol class="line">';
+    d.stops.forEach(function (s, i) {
+      var k = d.id + '-' + i;
+      var cls = 'stop' + (done[k] ? ' done' : '') + (i === nextIdx ? ' next' : '');
+      var links = [];
+      if (s.hotel) links.push('<a class="go" href="' + stayLink(s.hotel) + '" target="_blank" rel="noopener">導航到住宿</a>');
+      (s.links || []).forEach(function (l) {
+        links.push('<a class="go" href="' + mapUrl(l[1]) + '" target="_blank" rel="noopener">導航：' + esc(l[0]) + '</a>');
+      });
+      (s.tb || []).forEach(function (l) {
+        links.push('<a class="go tb" href="' + tabelogUrl(l[1]) + '" target="_blank" rel="noopener">Tabelog：' + esc(l[0]) + '</a>');
+      });
+      h += '<li class="' + cls + '">' +
+        '<button class="check" data-done="' + k + '" aria-pressed="' + (!!done[k]) + '" aria-label="標記已完成：' + esc(s.n) + '">✓</button>' +
+        '<div class="time">' + s.t + (i === nextIdx ? '<span class="tag">下一站</span>' : '') + '</div>' +
+        '<div class="box"><h3>' + esc(s.n) + '</h3>' + (s.d ? '<p>' + esc(s.d) + '</p>' : '') +
+        (links.length ? '<div class="links">' + links.join('') + '</div>' : '') + '</div></li>';
+    });
+    h += '</ol>';
+    var dayFavs = favs.filter(function (f) { return +f.day === d.id; });
+    if (dayFavs.length) {
+      h += '<h2>這天收藏的店家</h2>' + dayFavs.map(favCard).join('');
+    }
+  } else {
+    h += '<p class="lead">計畫有變時照這裡調整。原則是能換就換，不要硬撐。</p>';
+    d.backups.forEach(function (b) {
+      h += '<div class="bk"><div class="when">' + esc(b[0]) + '</div><div class="plan">' + esc(b[1]) + '</div></div>';
+    });
+  }
+  return h;
+}
+
+/* ---------- favorites share ---------- */
+function encodeFavs(list) {
+  var payload = list.map(function (f) { return { n: f.name, u: f.url || '', t: f.note || '', d: +f.day || 0 }; });
+  return 'KYUSHU1:' + btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+}
+function decodeFavs(text) {
+  var m = String(text || '').replace(/\s+/g, '').match(/KYUSHU1:([A-Za-z0-9+\/=]+)/);
+  if (!m) return null;
+  try {
+    var arr = JSON.parse(decodeURIComponent(escape(atob(m[1]))));
+    if (!Array.isArray(arr)) return null;
+    return arr.slice(0, 200).map(function (x) {
+      return {
+        name: String(x.n || '').trim().slice(0, 100),
+        url: safeUrl(String(x.u || '').slice(0, 1000)),
+        note: String(x.t || '').trim().slice(0, 300),
+        day: (+x.d >= 0 && +x.d <= 6) ? Math.floor(+x.d) : 0
+      };
+    }).filter(function (x) { return x.name; });
+  } catch (e) { return null; }
+}
+function copyText(text, done) {
+  var fallback = function () {
+    var wrap = document.getElementById('favCodeWrap'), ta = document.getElementById('favCode');
+    if (!ta) return done(false);
+    wrap.hidden = false; ta.value = text; ta.focus(); ta.select();
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) {}
+    done(ok);
+  };
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { done(true); }, fallback);
+      return;
+    }
+  } catch (e) {}
+  fallback();
+}
+
+/* ---------- render: food ---------- */
+function renderFood() {
+  var h = '<h2>我的收藏店家</h2>' +
+    '<p class="lead">在 Tabelog 或 Google 地圖找到想去的店，把店名和網址貼在這裡。選了日期，那天的行程頁最下方就會出現這家店。</p>' +
+    '<div class="card"><h3>新增一家店</h3>' +
+    '<label class="field">店名（必填）<input type="text" id="favName" autocomplete="off"></label>' +
+    '<label class="field">Tabelog 或地圖網址（選填，需以 http 開頭）<input type="url" id="favUrl" inputmode="url" autocomplete="off"></label>' +
+    '<label class="field">備註（想吃什麼、營業時間、要不要訂位）<input type="text" id="favNote" autocomplete="off"></label>' +
+    '<label class="field">放在哪一天<select id="favDay"><option value="0">還沒決定</option>' +
+    DAYS.map(function (d) { return '<option value="' + d.id + '">' + d.date + '（週' + d.wd + '）' + esc(d.route) + '</option>'; }).join('') +
+    '</select></label>' +
+    '<button class="btn" data-addfav="1">加入收藏</button><p class="msg" id="favMsg" role="status"></p></div>';
+
+  if (favs.length) {
+    var order = [0].concat(DAYS.map(function (d) { return d.id; }));
+    order.forEach(function (id) {
+      var list = favs.filter(function (f) { return +f.day === id; });
+      if (!list.length) return;
+      var title = id === 0 ? '還沒決定日期' : DAYS[id - 1].date + '（週' + DAYS[id - 1].wd + '）';
+      h += '<h2>' + title + '</h2>' + list.map(favCard).join('');
+    });
+  } else {
+    h += '<p class="lead">還沒有收藏的店家。</p>';
+  }
+
+  h += '<h2>分享給家人</h2>' +
+    '<p class="lead">收藏只存在各人的手機。想分享時，按「複製收藏清單」，用 LINE 傳給家人；家人把文字貼到下面的匯入框，按「匯入」就會合併進他們的收藏，不會蓋掉原有的店。</p>' +
+    '<div class="card"><h3>傳出去</h3>' +
+    '<button class="btn" data-exportfav="1">複製收藏清單</button>' +
+    '<label class="field" id="favCodeWrap" hidden>如果沒有自動複製，請長按下面文字全選後複製<textarea id="favCode" rows="4" readonly></textarea></label>' +
+    '<p class="msg ok" id="favExportMsg" role="status"></p></div>' +
+    '<div class="card"><h3>收進來</h3>' +
+    '<label class="field">貼上家人傳來的文字<textarea id="favImport" rows="4" placeholder="以 KYUSHU1: 開頭的一長串文字"></textarea></label>' +
+    '<button class="btn" data-importfav="1">匯入</button><p class="msg" id="favImportMsg" role="status"></p></div>';
+
+  h += '<h2>用 Tabelog 找餐廳</h2>' +
+    '<p class="lead">點下面的按鈕，會搜尋 Tabelog 上該地區的店家。結果是日文，可用瀏覽器翻譯，也可以回 Google 地圖看評論。</p>';
+  REGIONS.forEach(function (r) {
+    h += '<div class="card"><h3>' + esc(r[0]) + '</h3><div class="links">' +
+      CUISINES.map(function (c) { return '<a class="go tb" href="' + tabelogUrl(r[1] + ' ' + c[1]) + '" target="_blank" rel="noopener">' + esc(c[0]) + '</a>'; }).join('') +
+      '</div></div>';
+  });
+  h += '<p class="foot">搜尋是透過 Google 限定在 Tabelog 網站內，評分與營業時間請以店家頁面為準。山區訊號不穩，想去的店請提前收藏好。</p>';
+  return h;
+}
+
+/* ---------- render: checklist ---------- */
+function checklistCounts() {
+  var total = 0, ok = 0;
+  CHECKLIST.forEach(function (g, gi) { g.items.forEach(function (_, ii) { total++; if (checks[gi + '-' + ii]) ok++; }); });
+  return { total: total, ok: ok };
+}
+function renderList() {
+  var c = checklistCounts();
+  var h = '<h2>出發前確認清單</h2>' +
+    '<div class="card"><b id="progText">已完成 ' + c.ok + ' / ' + c.total + ' 項</b>' +
+    '<div class="prog" aria-hidden="true"><i id="progBar" style="width:' + Math.round(c.ok / c.total * 100) + '%"></i></div></div>';
+  CHECKLIST.forEach(function (g, gi) {
+    h += '<h2>' + esc(g.g) + '</h2><div class="card">';
+    g.items.forEach(function (it, ii) {
+      var k = gi + '-' + ii;
+      h += '<label class="todo"><input type="checkbox" data-check="' + k + '"' + (checks[k] ? ' checked' : '') + '><span>' + esc(it) + '</span></label>';
+    });
+    h += '</div>';
+  });
+  h += '<p class="foot">勾選紀錄只存在這支手機的瀏覽器裡。</p>';
+  return h;
+}
+
+/* ---------- render: info ---------- */
+function renderInfo() {
+  var h = '<h2>緊急電話</h2>' +
+    '<a class="sos big" href="tel:110"><span class="who">警察<small>事故、被偷、人身安全</small></span><span class="num">110</span></a>' +
+    '<a class="sos big" href="tel:119"><span class="who">救護車、消防<small>生病、受傷、火災</small></span><span class="num">119</span></a>' +
+    '<a class="sos" href="tel:+815038162787"><span class="who">Japan Visitor Hotline<small>觀光局，24 小時，可說中文</small></span><span class="num">050-3816-2787</span></a>' +
+    '<a class="sos" href="tel:+81927342810"><span class="who">駐福岡辦事處<small>辦公時間，護照遺失等領務事項</small></span><span class="num">092-734-2810</span></a>' +
+    '<a class="sos" href="tel:+886800085095"><span class="who">外交部急難救助專線<small>家人在台灣撥打</small></span><span class="num">0800-085-095</span></a>' +
+    '<p class="lead">辦事處的海外緊急聯絡電話請出發前到領事事務局網站查最新號碼，再填進下方「其他重要資料」。</p>';
+
+  h += '<h2>住宿與租車資料</h2><p class="lead">請自己填寫，資料只存在這支手機。填好名稱與地址後，行程頁的「導航到住宿」會更準。</p>';
+  Object.keys(INFO_FIELDS).forEach(function (key) {
+    var sec = INFO_FIELDS[key];
+    h += '<div class="card"><h3>' + esc(sec.title) + '</h3>';
+    sec.f.forEach(function (f) {
+      var v = (info[key] && info[key][f[0]]) || '';
+      var ph = (f[0] === 'name' && STAYS[key]) ? STAYS[key].label : (key === 'rental' && f[0] === 'company' ? 'AVIS Budget 租車 熊本機場店' : '');
+      h += '<label class="field">' + esc(f[1]) + '<input type="text" data-info="' + key + '.' + f[0] + '" value="' + esc(v) + '" placeholder="' + esc(ph) + '" autocomplete="off"></label>';
+    });
+    h += '</div>';
+  });
+
+  h += '<h2>即時查詢</h2>';
+  LINKS.forEach(function (l) {
+    h += '<a class="sos" href="' + l[1] + '" target="_blank" rel="noopener"><span class="who">' + esc(l[0]) + '<small>' + esc(l[2]) + '</small></span><span class="num" style="font-size:1rem;color:var(--accent)">開啟</span></a>';
+  });
+
+  h += '<h2>日本開車須知</h2><div class="card"><ul>' +
+    '<li>日本靠左行駛，轉彎時特別注意方向。</li>' +
+    '<li>加油看油箱蓋貼紙：紅色油槍是 Regular（一般汽油），黃色是 Hi-Octane，綠色是柴油。租車通常加 Regular，不確定先問租車公司。</li>' +
+    '<li>自助加油站（セルフ）要自己操作，不會用就找有店員的站。</li>' +
+    '<li>還車前加滿油，並留下收據。</li>' +
+    '<li>高速公路請向租車公司確認是否租 ETC 卡。</li>' +
+    '<li>冬季山區注意結冰：橋面、隧道出入口、背陰彎道最容易有看不見的薄冰，減速、不要急煞。</li>' +
+    '<li>天黑前抵達住宿，夜間山路盡量不開。</li>' +
+    '<li>停車請停在收費停車場或住宿處，路邊違停會被開單。</li>' +
+    '<li>開車不喝酒，同行有人想喝酒就由不喝的人開。</li>' +
+    '</ul></div>';
+
+  h += '<h2>購物與生活</h2><div class="card"><ul>' +
+    '<li>退稅要帶護照，並在有標示 Tax-free 的店家辦理，條件以店家公告為準。</li>' +
+    '<li>日本比台灣快 1 小時，台灣 12:00 等於日本 13:00。</li>' +
+    '<li>溫泉泡完記得補水，血壓偏高或偏低的長輩不要泡太久，起身時慢慢站。</li>' +
+    '<li>有刺青的家人，入住前先確認飯店與湯屋規定。</li>' +
+    '<li>獨棟別墅通常沒有櫃檯，抵達前先確認入住方式、門鎖密碼與垃圾處理規定，並注意夜間音量。</li>' +
+    '</ul></div>';
+
+  h += '<h2>常用日文</h2>';
+  SAY.forEach(function (s) {
+    h += '<div class="card say"><div class="zh">' + esc(s[0]) + '</div><div class="jp">' + esc(s[1]) + '</div><div class="ro">' + esc(s[2]) + '</div></div>';
+  });
+  h += '<p class="foot">景點與餐廳的導航按鈕會用日文名稱搜尋 Google 地圖。出發前請再核對營業時間與地址，山區訊號不穩，建議先在有網路時把本頁開過一次。</p>';
+  return h;
+}
+
+/* ---------- main render ---------- */
+function render() {
+  var daysBar = document.getElementById('daysBar');
+  daysBar.style.display = state.tab === 'trip' ? '' : 'none';
+  if (state.tab === 'trip') renderChips();
+  var v = document.getElementById('view');
+  v.innerHTML = state.tab === 'trip' ? renderTrip() : state.tab === 'food' ? renderFood() : state.tab === 'list' ? renderList() : renderInfo();
+  document.querySelectorAll('.bottom button').forEach(function (b) {
+    if (b.dataset.tab === state.tab) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+  });
+}
+
+function applyFont() {
+  document.documentElement.style.fontSize = fontSize + 'px';
+  document.querySelectorAll('.size button').forEach(function (b) { b.setAttribute('aria-pressed', String(+b.dataset.size === fontSize)); });
+}
+
+/* ---------- events ---------- */
+document.addEventListener('click', function (e) {
+  var t = e.target.closest('button');
+  if (!t) return;
+  if (t.dataset.size) { fontSize = +t.dataset.size; save('kyushu-font', fontSize); applyFont(); return; }
+  if (t.dataset.tab) { state.tab = t.dataset.tab; render(); window.scrollTo(0, 0); return; }
+  if (t.dataset.day) { state.day = +t.dataset.day; state.mode = 'main'; render(); window.scrollTo(0, 0); return; }
+  if (t.dataset.mode) { state.mode = t.dataset.mode; render(); return; }
+  if (t.dataset.done) { var k = t.dataset.done; if (done[k]) delete done[k]; else done[k] = true; save('kyushu-done', done); render(); return; }
+  if (t.dataset.addfav) {
+    var name = document.getElementById('favName').value.trim();
+    var msg = document.getElementById('favMsg');
+    if (!name) { msg.textContent = '請先輸入店名。'; return; }
+    var rawUrl = document.getElementById('favUrl').value.trim();
+    var url = safeUrl(rawUrl);
+    if (rawUrl && !url) { msg.textContent = '網址要以 http:// 或 https:// 開頭。'; return; }
+    favs.push({
+      id: String(Date.now()) + Math.floor(Math.random() * 1000),
+      name: name, url: url,
+      note: document.getElementById('favNote').value.trim(),
+      day: +document.getElementById('favDay').value
+    });
+    save('kyushu-favs', favs);
+    render();
+    var m2 = document.getElementById('favMsg'); if (m2) m2.textContent = '已收藏：' + name;
+    return;
+  }
+  if (t.dataset.exportfav) {
+    var em = document.getElementById('favExportMsg');
+    if (!favs.length) { em.className = 'msg'; em.textContent = '還沒有收藏的店家可以分享。'; return; }
+    var code = encodeFavs(favs);
+    var ta0 = document.getElementById('favCode'), wrap0 = document.getElementById('favCodeWrap');
+    ta0.value = code;
+    copyText(code, function (ok) {
+      em.className = 'msg ok';
+      if (ok) { wrap0.hidden = true; em.textContent = '已複製 ' + favs.length + ' 家店，可以貼到 LINE 傳給家人。'; }
+      else { wrap0.hidden = false; ta0.focus(); ta0.select(); em.textContent = '無法自動複製，請長按上方文字全選後複製。'; }
+    });
+    return;
+  }
+  if (t.dataset.importfav) {
+    var im = document.getElementById('favImportMsg');
+    var list = decodeFavs(document.getElementById('favImport').value);
+    if (list === null) { im.className = 'msg'; im.textContent = '看不懂這段文字，請確認是完整貼上，且以 KYUSHU1: 開頭。'; return; }
+    var added = 0;
+    list.forEach(function (x) {
+      var dup = favs.some(function (f) { return f.name === x.name && (f.url || '') === (x.url || ''); });
+      if (dup) return;
+      favs.push({ id: String(Date.now()) + Math.floor(Math.random() * 100000) + added, name: x.name, url: x.url, note: x.note, day: x.day });
+      added++;
+    });
+    save('kyushu-favs', favs);
+    var skipped = list.length - added;
+    render();
+    var im2 = document.getElementById('favImportMsg');
+    if (im2) { im2.className = 'msg ok'; im2.textContent = '已匯入 ' + added + ' 家店' + (skipped ? '，另有 ' + skipped + ' 家已經存在，略過' : '') + '。'; }
+    return;
+  }
+  if (t.dataset.delfav) {
+    if (!window.confirm('確定要刪除這家店？')) return;
+    favs = favs.filter(function (f) { return f.id !== t.dataset.delfav; });
+    save('kyushu-favs', favs);
+    render();
+    return;
+  }
+});
+document.addEventListener('change', function (e) {
+  var c = e.target.closest('[data-check]');
+  if (!c) return;
+  if (c.checked) checks[c.dataset.check] = true; else delete checks[c.dataset.check];
+  save('kyushu-checks', checks);
+  var n = checklistCounts();
+  var pt = document.getElementById('progText'), pb = document.getElementById('progBar');
+  if (pt) pt.textContent = '已完成 ' + n.ok + ' / ' + n.total + ' 項';
+  if (pb) pb.style.width = Math.round(n.ok / n.total * 100) + '%';
+});
+document.addEventListener('input', function (e) {
+  var i = e.target.closest('[data-info]');
+  if (!i) return;
+  var p = i.dataset.info.split('.');
+  info[p[0]] = info[p[0]] || {};
+  info[p[0]][p[1]] = i.value;
+  save('kyushu-info', info);
+});
+
+/* ---------- init ---------- */
+(function init() {
+  var td = todayDay();
+  if (td) state.day = td;
+  applyFont();
+  render();
+  setInterval(function () { if (state.tab === 'trip' && state.mode === 'main' && todayDay()) { var y = window.scrollY; render(); window.scrollTo(0, y); } }, 300000);
+})();
+</script>
+</body>
+</html>
