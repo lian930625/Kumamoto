@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>中日翻譯 日中翻訳</title>
+<style>
+:root{--bg:#faf7f2;--card:#fff;--text:#2a2622;--muted:#7a736b;--line:#e4ddd2;--accent:#c0392b;--accent-t:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b1917;--card:#262321;--text:#f1ece5;--muted:#a49c92;--line:#3a3632;--accent:#e2574a;--accent-t:#1b1917;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1b1917;--card:#262321;--text:#f1ece5;--muted:#a49c92;--line:#3a3632;--accent:#e2574a;--accent-t:#1b1917;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font:16px/1.6 -apple-system,"Noto Sans TC","Noto Sans JP","PingFang TC","Hiragino Sans",sans-serif}
+main{max-width:640px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:20px;margin:0 0 16px;font-weight:600}
+.dir{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.dir .lang{flex:1;text-align:center;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--card);font-weight:600}
+button{font:inherit;color:var(--text);cursor:pointer}
+.swap{border:1px solid var(--line);background:var(--card);border-radius:50%;width:42px;height:42px;font-size:18px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+textarea{width:100%;min-height:110px;border:0;outline:0;resize:vertical;background:transparent;color:var(--text);font:inherit}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;align-items:center}
+.tool{border:1px solid var(--line);background:transparent;border-radius:999px;padding:8px 14px;font-size:14px}
+.tool.on{background:var(--accent);color:var(--accent-t);border-color:var(--accent)}
+.go{margin-left:auto;background:var(--accent);color:var(--accent-t);border:0;border-radius:999px;padding:10px 22px;font-weight:600}
+.go:disabled{opacity:.5}
+#preview{max-width:100%;max-height:200px;border-radius:10px;margin-top:8px;display:none}
+#out{margin-top:14px;display:none}
+#tr{font-size:20px;white-space:pre-wrap;margin:0}
+#rd{color:var(--muted);font-size:14px;margin:6px 0 0;white-space:pre-wrap}
+#src{color:var(--muted);font-size:13px;margin:0 0 8px;white-space:pre-wrap}
+#msg{color:var(--muted);font-size:13px;margin:10px 2px 0;min-height:1.2em}
+</style>
+</head>
+<body>
+<main>
+<h1>中日翻譯 ⇄ 日中翻訳</h1>
+<div class="dir">
+  <div class="lang" id="from">中文</div>
+  <button class="swap" id="swap" aria-label="切換方向">⇄</button>
+  <div class="lang" id="to">日本語</div>
+</div>
+<div class="box">
+  <textarea id="inp" placeholder="輸入文字後按 Enter 翻譯（Shift+Enter 換行），或按麥克風、拍照…"></textarea>
+  <img id="preview" alt="">
+  <div class="tools">
+    <button class="tool" id="mic">🎤 語音</button>
+    <button class="tool" id="cam">📷 照片</button>
+    <button class="go" id="go">翻譯</button>
+  </div>
+  <input type="file" id="file" accept="image/*" capture="environment" hidden>
+</div>
+<div class="box" id="out">
+  <p id="src"></p>
+  <p id="tr"></p>
+  <p id="rd"></p>
+  <div class="tools"><button class="tool" id="spk">🔊 朗讀</button><button class="tool" id="cp">複製</button></div>
+</div>
+<div id="msg"></div>
+</main>
+<script>
+var dir = 'zh-ja', imgBlob = null, last = '', $ = function(i){return document.getElementById(i)};
+var names = {zh:'中文', ja:'日本語'};
+function render(){var p = dir.split('-');$('from').textContent = names[p[0]];$('to').textContent = names[p[1]]}
+function say(t){$('msg').textContent = t || ''}
+$('swap').onclick = function(){dir = dir === 'zh-ja' ? 'ja-zh' : 'zh-ja'; render()};
+
+// 語音輸入
+var SR = window.SpeechRecognition || window.webkitSpeechRecognition, rec = null;
+$('mic').onclick = function(){
+  if(!SR){say('此瀏覽器不支援語音辨識，請改用 Chrome 或 Safari。');return}
+  if(rec){rec.stop();return}
+  rec = new SR(); rec.lang = dir === 'zh-ja' ? 'zh-TW' : 'ja-JP'; rec.interimResults = true;
+  var base = $('inp').value ? $('inp').value + ' ' : '';
+  rec.onresult = function(e){var t = '';for(var i = 0; i < e.results.length; i++) t += e.results[i][0].transcript;$('inp').value = base + t};
+  rec.onerror = function(e){say('語音辨識失敗：' + e.error)};
+  rec.onend = function(){rec = null;$('mic').classList.remove('on');$('mic').textContent = '🎤 語音'};
+  try{rec.start();$('mic').classList.add('on');$('mic').textContent = '⏹ 停止';say('請開始說話…')}catch(err){rec = null;say('無法啟動麥克風')}
+};
+
+// 照片
+$('cam').onclick = function(){$('file').click()};
+$('file').onchange = function(){
+  var f = this.files[0]; if(!f) return;
+  imgBlob = f; var p = $('preview'); p.src = URL.createObjectURL(f); p.style.display = 'block';
+  say('已選擇照片，按「翻譯」辨識圖中文字。');
+};
+
+// 翻譯
+function parse(t){
+  try{return JSON.parse(t.replace(/```json|```/g,'').trim())}catch(e){return {translation:t,reading:'',original:''}}
+}
+$('go').onclick = async function(){
+  var text = $('inp').value.trim();
+  if(!text && !imgBlob){say('請先輸入文字或選擇照片。');return}
+  var btn = $('go'); btn.disabled = true; say('翻譯中…');
+  try{
+    var sample = await claude.use('sample');
+    if(!sample){say('目前無法使用翻譯功能（需要在 claude.ai 開啟並同意授權）。');return}
+    var toJa = dir === 'zh-ja';
+    var rule = '只回傳一個 JSON 物件，不要任何其他文字或 markdown：{"original":"圖片中辨識到的原文（沒有圖片則留空字串）","translation":"譯文","reading":"譯文或原文中日文部分的平假名讀音（若為日文）"}。'
+      + (toJa ? '請把內容翻成自然的日文（繁體中文使用者，語氣禮貌自然）。reading 填日文譯文的平假名讀音。'
+              : '請把日文內容翻成自然的台灣繁體中文。reading 填日文原文的平假名讀音。');
+    var opts = {cache:false}, prompt;
+    if(imgBlob){
+      var lim = await sample.limits();
+      if(!lim || !lim.images){say('此環境尚不支援圖片辨識，請改用文字或語音。');return}
+      opts.images = [imgBlob];
+      prompt = rule + '\n請先辨識圖片中的文字，再翻譯。' + (text ? '\n補充說明：' + text : '');
+    } else prompt = rule + '\n\n要翻譯的內容：\n' + text;
+    var r = await sample(prompt, opts);
+    var d = parse(r.text || '');
+    last = d.translation || '';
+    $('src').textContent = d.original ? '辨識：' + d.original : '';
+    $('src').style.display = d.original ? 'block' : 'none';
+    $('tr').textContent = last;
+    $('rd').textContent = d.reading ? '讀音：' + d.reading : '';
+    $('out').style.display = 'block'; say('');
+  }catch(e){
+    say(e && e.code === 'rate_limited' ? '請求太頻繁，請稍後再試。' : e && e.code === 'not_granted' ? '尚未授權，無法翻譯。' : '翻譯失敗，請再試一次。');
+  }finally{btn.disabled = false}
+};
+
+// Enter 翻譯（輸入法選字中不觸發）
+$('inp').addEventListener('keydown', function(e){
+  if(e.key === 'Enter' && !e.shiftKey && !e.isComposing && e.keyCode !== 229){
+    e.preventDefault();
+    if(!$('go').disabled) $('go').click();
+  }
+});
+
+// 朗讀與複製
+$('spk').onclick = function(){
+  if(!last || !window.speechSynthesis){say('無法朗讀');return}
+  speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(last); u.lang = dir === 'zh-ja' ? 'ja-JP' : 'zh-TW'; u.rate = .9;
+  speechSynthesis.speak(u);
+};
+$('cp').onclick = function(){
+  try{navigator.clipboard.writeText(last).then(function(){say('已複製')},function(){say('複製失敗')})}catch(e){say('複製失敗')}
+};
+render();
+</script>
+</body>
+</html>
