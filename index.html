@@ -7,9 +7,9 @@
 <meta name="theme-color" content="#155E95">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="熊本行程">
+<meta name="apple-mobile-web-app-title" content="九州行程">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%8B%3C/text%3E%3C/svg%3E">
-<title>熊本自駕 6 天行程</title>
+<title>九州自駕 6 天行程</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
@@ -205,6 +205,13 @@ button.go.del { background: var(--warn-bg); color: var(--warn); }
 .msg.ok { color: var(--ok); }
 textarea { display: block; width: 100%; margin-top: 0.2rem; padding: 0.6rem 0.7rem; border-radius: 0.6rem; border: 1.5px solid var(--line); background: var(--bg); font-size: 0.9rem; line-height: 1.4; resize: vertical; word-break: break-all; }
 [hidden] { display: none !important; }
+.flight { margin-top: 0.9rem; background: var(--card); border: 1.5px solid var(--line); border-left: 6px solid var(--accent); border-radius: 0.9rem; padding: 0.7rem 1rem; }
+.fl-top { display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; }
+.fl-top b { font-family: var(--serif); font-size: 1.3rem; }
+.fl-tag { background: var(--accent); color: var(--accent-ink); font-weight: 700; font-size: 0.8rem; padding: 0.1rem 0.6rem; border-radius: 0.5rem; }
+.fl-times { display: flex; gap: 1.4rem; flex-wrap: wrap; margin-top: 0.3rem; font-size: 0.85rem; color: var(--sub); }
+.fl-times span b { display: block; font-size: 1.15rem; color: var(--ink); }
+.flight .go { margin-top: 0.6rem; }
 .foot { color: var(--sub); font-size: 0.8rem; margin-top: 1.5rem; }
 @media (prefers-reduced-motion: reduce) { .prog i { transition: none; } }
 </style>
@@ -212,7 +219,7 @@ textarea { display: block; width: 100%; margin-top: 0.2rem; padding: 0.6rem 0.7r
 <body>
 
 <header class="top">
-  <h1>熊本自駕 6 天 5 夜</h1>
+  <h1>九州自駕 6 天 5 夜</h1>
   <p>2/10 至 2/15　日本時間比台灣快 1 小時</p>
   <div class="size" role="group" aria-label="字體大小">
     <span>字體</span>
@@ -254,7 +261,7 @@ function save(key, val) {
 
 /* ---------- data ---------- */
 var STAYS = {
-  aso:  { label: '熊本阿蘇萬楓酒店', def: '熊本阿蘇萬楓酒店' },
+  aso:  { label: '熊本阿蘇萬楓酒店', def: '1407-1 Kurokawa, Aso, Kumamoto 869-2225', addr: '1407-1 Kurokawa, Aso, Kumamoto 869-2225' },
   yufu: { label: 'Yufuin Lamp no Yado', def: 'Yufuin Lamp no Yado' },
   kuma: { label: '熊本新市街光芒飯店', def: '熊本新市街光芒飯店' },
   mova: { label: 'Mova Villa Haramizu', def: 'Mova Villa Haramizu 菊陽町' }
@@ -262,19 +269,20 @@ var STAYS = {
 
 var DAYS = [
  { id: 1, date: '2/10', wd: '三', md: [2,10], route: '熊本機場 → 阿蘇', title: '降落大自然，直面阿蘇火山與溫泉', stay: 'aso',
-   alerts: ['出發前一天查中岳火山口有沒有管制。', '山區日落早、夜間易結冰，晚餐後不要再開車。'],
+   alerts: ['Google 地圖車程：機場到草千里 45 分、草千里到中岳火山口 10 分、火山口到飯店 30 分。', 'CI198 10:45 抵達，入境、領行李、取車都會花時間，預計 11:45 前後出發。', '出發前一天查中岳火山口有沒有管制。山區日落早、夜間易結冰，盡量天黑前入住，晚餐後不要再開車。'],
    stops: [
-    { t: '11:00', n: '熊本機場取車出發', d: 'AVIS Budget 租車 熊本機場店。取車手續常耗時，抓 11:30 出發較保險。', links: [['AVIS 取車', 'AVIS Budget 熊本空港店'], ['機場', '熊本空港']] },
-    { t: '12:00', n: '阿蘇草千里之濱、中岳火山口', d: '先確認火山口沒有管制再上山。', links: [['草千里', '草千里ヶ浜'], ['中岳火山口', '阿蘇山 火口']] },
-    { t: '13:00', n: '草千里景觀餐廳午餐', d: '名物赤牛丼；不吃牛可點雞肉丼。', links: [['餐廳', '草千里 レストラン']], tb: [['附近午餐', '阿蘇 草千里 ランチ']] },
-    { t: '15:30', n: '入住熊本阿蘇萬楓酒店', d: '先休息、泡湯，調整時差。', hotel: 'aso' },
+    { t: '10:45', n: 'CI198 抵達熊本機場', d: '高雄 07:30 起飛，日本時間 10:45 抵達。先入境、領行李。', links: [['機場', '熊本空港']] },
+    { t: '11:45', n: '前往 AVIS 櫃檯取車出發', d: 'AVIS Budget 租車 熊本機場店。取車手續常耗時，抓 11:45 出發。', links: [['AVIS 取車', 'AVIS Budget 熊本空港店'], ['機場', '熊本空港']] },
+    { t: '12:30', n: '抵達草千里之濱，景觀餐廳午餐', d: '車程約 45 分鐘。名物赤牛丼；不吃牛可點雞肉丼。先吃飯、再看風景。', links: [['草千里', '草千里ヶ浜'], ['餐廳', '草千里 レストラン']], tb: [['附近午餐', '阿蘇 草千里 ランチ']] },
+    { t: '14:00', n: '中岳火山口', d: '從草千里開車約 10 分鐘。先確認火山口沒有管制再上山。', links: [['中岳火山口', '阿蘇山 火口']] },
+    { t: '16:00', n: '入住熊本阿蘇萬楓酒店', d: '從火山口開車約 30 分鐘。地址：1407-1 Kurokawa, Aso, Kumamoto 869-2225。先休息、泡湯，調整時差。', hotel: 'aso' },
     { t: '18:00', n: '溫泉老街悠閒晚餐', d: '早點用餐，早點回房。', links: [['溫泉街', '阿蘇 温泉街 レストラン']], tb: [['晚餐', '阿蘇 夕食']] }
    ],
    backups: [
     ['中岳火山口管制', '草千里照常參觀，改去阿蘇火山博物館（室內，有火山模型與影片）。午餐照常在草千里。'],
     ['下雨或起霧', '以室內為主：火山博物館，再逛阿蘇神社與門前町商店街，下午放輕鬆。'],
     ['山路結冰、車況不佳', '取消草千里，直接開往飯店，把時間留給溫泉。'],
-    ['取車延誤', '午餐改在機場或市區吃，縮短草千里停留，確保 15:30 前入住。']
+    ['取車或入境延誤', '午餐改在機場或市區吃，縮短草千里停留或只看草千里，確保 17:00 前入住。']
    ] },
  { id: 2, date: '2/11', wd: '四', md: [2,11], route: '阿蘇 → 高千穗 → 由布院', title: '深入神話高千穗峽划船，奔向由布院', stay: 'yufu',
    alerts: ['划船務必先預約，冬季是熱門時段。', '高千穗到由布院約 2 小時 15 分，13:30 準時出發，天黑前抵達。'],
@@ -310,7 +318,7 @@ var DAYS = [
     ['想換行程', '改去由布院 Floral Village（貓頭鷹與小動物）加金鱗湖周邊美術館，步行距離短。']
    ] },
  { id: 4, date: '2/13', wd: '六', md: [2,13], route: '由布院 → 熊本', title: '朝霧金鱗湖，奔回熊本名城', stay: 'kuma',
-   alerts: ['清晨氣溫低，請加強保暖。', '出發前查高速公路有沒有封閉或結冰。'],
+   alerts: ['清晨氣溫低，長輩請加強保暖。', '出發前查高速公路有沒有封閉或結冰。'],
    stops: [
     { t: '07:30', n: '散步到金鱗湖看晨霧', d: '清晨限定的夢幻景色。', links: [['金鱗湖', '金鱗湖']] },
     { t: '09:30', n: '悠閒逛湯之坪街道、採買點心', d: '退房後逛街，行李先放車上。', links: [['湯之坪', '湯の坪街道']] },
@@ -330,7 +338,7 @@ var DAYS = [
    alerts: ['先查官網，確認熊本熊部長在館與表演時間。', 'Mova Villa 是獨棟別墅，入住方式與時間請先向房東確認，並記得今晚的晚餐要自己安排。'],
    stops: [
     { t: '08:45', n: '熊本新市街光芒飯店退房', d: '行李先放車上。' },
-    { t: '09:30', n: '水前寺成趣園', d: '平緩好走，可悠閒餵巨大錦鯉與烏龜。', links: [['成趣園', '水前寺成趣園']] },
+    { t: '09:30', n: '水前寺成趣園', d: '平緩好走，長輩可悠閒餵巨大錦鯉與烏龜。', links: [['成趣園', '水前寺成趣園']] },
     { t: '11:30', n: 'SAKURA MACHI 大採購與午餐', d: '巨型熊本熊打卡。', links: [['商場', 'SAKURA MACHI Kumamoto']], tb: [['商場午餐', 'サクラマチクマモト ランチ']] },
     { t: '14:30', n: '熊本熊廣場', d: '近距離看部長熱情跳舞，需查官網在館時間。', links: [['熊本熊廣場', 'くまモンスクエア']] },
     { t: '16:00', n: '上下通商店街藥妝大補貨', d: '採買完可先把東西放回車上。', links: [['上下通', '上通 下通 アーケード 熊本']] },
@@ -345,12 +353,12 @@ var DAYS = [
     ['不想晚上開車找餐廳', '先到別墅附近的超市或超商買熟食與食材，在別墅自己吃。']
    ] },
  { id: 6, date: '2/15', wd: '一', md: [2,15], route: '菊陽原水 → 機場 → 台灣', title: '滿載而歸，輕鬆返台', stay: null,
-   alerts: ['航班 11:30。還車後直接去櫃檯報到，再逛免稅店，留意登機時間。', '還車前務必加滿油，並拍照留存車況。'],
+   alerts: ['CI199 11:55 從熊本起飛，13:45 抵達高雄（當地時間）。國際線建議 09:55 前完成報到。', '還車後直接去櫃檯報到，再逛免稅店，留意登機時間。', '還車前務必加滿油，並拍照留存車況。'],
    stops: [
     { t: '08:30', n: '別墅退房', d: '依房東規定整理、關窗鎖門。' },
     { t: '09:15', n: '機場周邊加滿油、辦理還車', d: '先加滿油，再到 AVIS Budget 熊本機場店還車，拍照留存車況。', links: [['加油站', '熊本空港 ガソリンスタンド'], ['AVIS 還車', 'AVIS Budget 熊本空港店']] },
     { t: '09:45', n: '新航廈免稅店最後衝刺，享用在地輕食', d: '注意登機時間。', links: [['機場', '熊本空港']], tb: [['機場餐廳', '熊本空港 レストラン']] },
-    { t: '11:30', n: '搭機返台，平安到家' }
+    { t: '11:55', n: '搭機返台（CI199 熊本 → 高雄），平安到家', d: '13:45 抵達高雄。若班機有異動，請以航空公司通知為準。' }
    ],
    backups: [
     ['航班延誤或取消', '先聯絡航空公司，再通知租車公司延長還車時間，並確認 2/15 當晚住宿。'],
@@ -367,6 +375,8 @@ var CHECKLIST = [
    'Yufuin Lamp no Yado 訂房確認（2/11、2/12）',
    '熊本新市街光芒飯店訂房確認（2/13）',
    'Mova Villa Haramizu 訂房確認（2/14），並問清楚入住方式與時間',
+   '出發前再確認 CI198（2/10 07:30）、CI199（2/15 11:55）起降時間沒有異動',
+   '線上預選機上餐點（華航官網，CI198、CI199 已開放）',
    '租車預約確認，記下取還車地點與緊急電話',
    '租車加保完全免責補償（NOC）',
    '租車確認附雪胎或防滑鏈',
@@ -390,7 +400,7 @@ var CHECKLIST = [
    '暖暖包、手套、帽子、圍巾',
    '防滑好走的鞋',
    '雨具或輕便雨衣（動物園叢林巴士用）',
-   '常備藥品與用藥紀錄',
+   '長輩常備藥品與用藥紀錄',
    '護唇膏、乳液（溫泉後保濕）',
    '泡湯小毛巾、塑膠袋'
  ]},
@@ -398,7 +408,7 @@ var CHECKLIST = [
    '手機架與車充線',
    '導航語言設為中文',
    '飲水與零食',
-   '薄毯（車程保暖）',
+   '薄毯（長輩車程保暖）',
    '零錢包（停車場、收費站）'
  ]}
 ];
@@ -424,13 +434,16 @@ var SAY = [
  ['請幫幫我', '助けてください。', 'Tasukete kudasai']
 ];
 
+var FLIGHT_DEFAULT = { out_dep: '07:30', out_arr: '10:45', ret_dep: '11:55', ret_arr: '13:45' };
+
 var INFO_FIELDS = {
   rental: { title: '租車資料（AVIS Budget 熊本機場店）', f: [['company','租車公司'], ['no','預約編號'], ['tel','緊急聯絡電話'], ['place','還車地點與時間']] },
+  flight: { title: '去回程班機（CI198／CI199）', hint: '已依華航電子資料預設：2/10 CI198 高雄 07:30 起飛、熊本 10:45 抵達；2/15 CI199 熊本 11:55 起飛、高雄 13:45 抵達（皆為當地時間）。若班機有異動，請在這裡改成新時間。', f: [['pnr','訂位代號'], ['out_dep','去程 CI198 高雄起飛時間（2/10）'], ['out_arr','去程 抵達熊本時間'], ['ret_dep','回程 CI199 熊本起飛時間（2/15）'], ['ret_arr','回程 抵達高雄時間'], ['note','報到櫃檯、行李、座位備註']] },
   aso:  { title: '熊本阿蘇萬楓酒店（2/10）', f: [['name','飯店名稱'], ['addr','地址'], ['tel','電話'], ['no','訂房編號']] },
   yufu: { title: 'Yufuin Lamp no Yado（2/11、2/12）', f: [['name','飯店名稱'], ['addr','地址'], ['tel','電話'], ['no','訂房編號']] },
   kuma: { title: '熊本新市街光芒飯店（2/13）', f: [['name','飯店名稱'], ['addr','地址'], ['tel','電話'], ['no','訂房編號']] },
   mova: { title: 'Mova Villa Haramizu（2/14）', f: [['name','別墅名稱（含棟號）'], ['addr','地址'], ['tel','房東聯絡方式'], ['no','訂房編號'], ['entry','入住方式與密碼']] },
-  other: { title: '其他重要資料', f: [['flight','去回程航班'], ['contact','家人緊急聯絡人'], ['office','駐福岡辦事處海外緊急電話']] }
+  other: { title: '其他重要資料', f: [['contact','家人緊急聯絡人'], ['office','駐福岡辦事處海外緊急電話']] }
 };
 
 var REGIONS = [
@@ -491,6 +504,20 @@ function favCard(f) {
   return h;
 }
 
+/* ---------- flight panel ---------- */
+function flightPanel(d) {
+  var f = info.flight || {}, out = d.id === 1, ret = d.id === 6;
+  if (!out && !ret) return '';
+  var dep = (out ? f.out_dep : f.ret_dep) || (out ? FLIGHT_DEFAULT.out_dep : FLIGHT_DEFAULT.ret_dep);
+  var arr = (out ? f.out_arr : f.ret_arr) || (out ? FLIGHT_DEFAULT.out_arr : FLIGHT_DEFAULT.ret_arr);
+  var missing = false;
+  return '<div class="flight"><div class="fl-top"><span class="fl-tag">' + (out ? '去程' : '回程') + '</span><b>' + (out ? 'CI198' : 'CI199') + '</b>' +
+    '<span>' + (out ? '高雄 KHH → 熊本 KMJ' : '熊本 KMJ → 高雄 KHH') + '</span></div>' +
+    '<div class="fl-times"><span>起飛（' + (out ? '高雄' : '熊本') + '）<b>' + esc(dep) + '</b></span><span>抵達（' + (out ? '熊本' : '高雄') + '）<b>' + esc(arr) + '</b></span>' +
+    (f.pnr ? '<span>訂位代號<b>' + esc(f.pnr) + '</b></span>' : '') + '</div>' +
+    (missing ? '<button class="go" data-tab="info">到資訊頁填入班機時間</button>' : '') + '</div>';
+}
+
 /* ---------- render: trip ---------- */
 function renderChips() {
   var td = todayDay();
@@ -520,6 +547,7 @@ function renderTrip() {
   }
   h += '</section>';
 
+  h += flightPanel(d);
   h += '<div class="alerts"><b>今天先記住</b><ul>' + d.alerts.map(function (a) { return '<li>' + esc(a) + '</li>'; }).join('') + '</ul></div>';
 
   h += '<div class="seg" role="group" aria-label="切換行程或備案">' +
@@ -680,10 +708,10 @@ function renderInfo() {
   h += '<h2>住宿與租車資料</h2><p class="lead">請自己填寫，資料只存在這支手機。填好名稱與地址後，行程頁的「導航到住宿」會更準。</p>';
   Object.keys(INFO_FIELDS).forEach(function (key) {
     var sec = INFO_FIELDS[key];
-    h += '<div class="card"><h3>' + esc(sec.title) + '</h3>';
+    h += '<div class="card"><h3>' + esc(sec.title) + '</h3>' + (sec.hint ? '<p class="lead">' + esc(sec.hint) + '</p>' : '');
     sec.f.forEach(function (f) {
       var v = (info[key] && info[key][f[0]]) || '';
-      var ph = (f[0] === 'name' && STAYS[key]) ? STAYS[key].label : (key === 'rental' && f[0] === 'company' ? 'AVIS Budget 租車 熊本機場店' : '');
+      var ph = (key === 'flight' && FLIGHT_DEFAULT[f[0]]) ? FLIGHT_DEFAULT[f[0]] : (f[0] === 'addr' && STAYS[key] && STAYS[key].addr) ? STAYS[key].addr : (f[0] === 'name' && STAYS[key]) ? STAYS[key].label : (key === 'rental' && f[0] === 'company' ? 'AVIS Budget 租車 熊本機場店' : '');
       h += '<label class="field">' + esc(f[1]) + '<input type="text" data-info="' + key + '.' + f[0] + '" value="' + esc(v) + '" placeholder="' + esc(ph) + '" autocomplete="off"></label>';
     });
     h += '</div>';
@@ -709,7 +737,7 @@ function renderInfo() {
   h += '<h2>購物與生活</h2><div class="card"><ul>' +
     '<li>退稅要帶護照，並在有標示 Tax-free 的店家辦理，條件以店家公告為準。</li>' +
     '<li>日本比台灣快 1 小時，台灣 12:00 等於日本 13:00。</li>' +
-    '<li>溫泉泡完記得補水，血壓偏高或偏低的不要泡太久，起身時慢慢站。</li>' +
+    '<li>溫泉泡完記得補水，血壓偏高或偏低的長輩不要泡太久，起身時慢慢站。</li>' +
     '<li>有刺青的家人，入住前先確認飯店與湯屋規定。</li>' +
     '<li>獨棟別墅通常沒有櫃檯，抵達前先確認入住方式、門鎖密碼與垃圾處理規定，並注意夜間音量。</li>' +
     '</ul></div>';
